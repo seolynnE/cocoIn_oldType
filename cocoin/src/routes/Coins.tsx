@@ -18,7 +18,7 @@ const Header = styled.header`
   border-bottom: 1px solid #fff;
   backdrop-filter: blur(2px);
   z-index: 10;
-  h1 {
+  a {
     font-size: 24px;
     font-weight: 900;
     z-index: 11;
@@ -91,7 +91,7 @@ function Coins() {
   return (
     <Container>
       <Header>
-        <h1>cocoIn</h1>
+        <Link to="/">cocoIn</Link>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>

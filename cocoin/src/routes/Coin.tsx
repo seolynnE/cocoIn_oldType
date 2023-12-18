@@ -1,11 +1,24 @@
 import { useEffect, useState } from "react";
-import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useMatch,
+  useParams,
+} from "react-router-dom";
 import { styled } from "styled-components";
-import Price from "./Price";
-import Chart from "./Chart";
 
 const Container = styled.div`
   padding: 100px 20px;
+`;
+
+const Wrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 
 const Header = styled.header`
@@ -20,7 +33,7 @@ const Header = styled.header`
   border-bottom: 1px solid #fff;
   backdrop-filter: blur(2px);
   z-index: 10;
-  h1 {
+  a {
     font-size: 24px;
     font-weight: 900;
     z-index: 11;
@@ -38,45 +51,97 @@ const Loader = styled.span`
   font-size: 30px;
   text-align: center;
 `;
-
-const CoinInfoWrap = styled.div`
-  ul {
+const OverViewWrap = styled.ul`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 340px;
+  padding: 20px;
+  margin: 0 auto;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+  li {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    width: 340px;
-    padding: 20px;
-    margin: 0 auto;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.2);
-    li {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      p {
-        font-size: 12px;
-        font-weight: 400;
-        text-align: center;
-      }
-      span {
-        padding-top: 12px;
-        font-size: 18px;
-      }
+    gap: 4px;
+    p {
+      font-size: 12px;
+      font-weight: 400;
+      text-align: center;
     }
-    &.each-side {
-      li {
-        align-items: flex-start;
-        &:last-child {
-          align-items: flex-end;
-        }
+    span {
+      padding-top: 12px;
+      font-size: 18px;
+    }
+  }
+`;
+const Description = styled.p`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 0;
+`;
+
+const OverViewItemWrap = styled.ul`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 340px;
+  padding: 20px;
+  margin: 0 auto;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+  li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    p {
+      font-size: 12px;
+      font-weight: 400;
+      text-align: center;
+    }
+    span {
+      padding-top: 12px;
+      font-size: 18px;
+    }
+    li {
+      &:last-child {
+        align-items: flex-end;
       }
     }
   }
-  .description {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 60px 0;
+`;
+
+const Tabs = styled.ul`
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+`;
+const TabBtn = styled.li<{ isActive: boolean }>`
+  width: 140px;
+  border: 1px solid
+    ${(props) =>
+      props.isActive ? props.theme.accentColor : props.theme.textColor};
+  transition: 0.3s;
+  &:last-child {
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+  }
+  a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 12px 10px;
+    color: ${(props) =>
+      props.isActive ? props.theme.accentColor : props.theme.textColor};
+  }
+  &:hover {
+    border-color: ${(props) => props.theme.accentColor};
+    border-left: 1px solid ${(props) => props.theme.accentColor};
+    a {
+      color: ${(props) => props.theme.accentColor};
+    }
   }
 `;
 
@@ -144,6 +209,60 @@ interface PriceData {
   };
 }
 
+function OverView({ coinInfo }: { coinInfo: InfoData | undefined }) {
+  return (
+    <OverViewWrap>
+      <li>
+        <p>RANK</p>
+        <span>{coinInfo?.rank}</span>
+      </li>
+      <li>
+        <p>SYMBOL</p>
+        <span>{coinInfo?.symbol}</span>
+      </li>
+      <li>
+        <p>
+          OPEN
+          <br />
+          SOURCE
+        </p>
+        {coinInfo?.open_source ? <span>YES</span> : <span>No</span>}
+      </li>
+    </OverViewWrap>
+  );
+}
+
+function OverViewItem({ priceInfo }: { priceInfo: PriceData | undefined }) {
+  return (
+    <OverViewItemWrap>
+      <li>
+        <p>TOTAL SUPLY</p>
+        <span>{priceInfo?.total_supply}</span>
+      </li>
+      <li>
+        <p>MAX SUPPLY</p>
+        <span>{priceInfo?.max_supply}</span>
+      </li>
+    </OverViewItemWrap>
+  );
+}
+
+function Tab() {
+  const { coinId } = useParams<keyof Params>();
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
+  return (
+    <Tabs>
+      <TabBtn isActive={chartMatch !== null}>
+        <Link to={`/${coinId}/chart`}>Chart</Link>
+      </TabBtn>
+      <TabBtn isActive={priceMatch !== null}>
+        <Link to={`/${coinId}/price`}>Price</Link>
+      </TabBtn>
+    </Tabs>
+  );
+}
+
 function Coin() {
   const [loading, setLoading] = useState(true);
   const { coinId } = useParams<keyof Params>();
@@ -166,47 +285,19 @@ function Coin() {
   return (
     <Container>
       <Header>
-        <h1>cocoIn</h1>
+        <Link to="/">cocoIn</Link>
         <p>{state}</p>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
-        <CoinInfoWrap>
-          <ul>
-            <li>
-              <p>RANK</p>
-              <span>{coinInfo?.rank}</span>
-            </li>
-            <li>
-              <p>SYMBOL</p>
-              <span>{coinInfo?.symbol}</span>
-            </li>
-            <li>
-              <p>
-                OPEN
-                <br />
-                SOURCE
-              </p>
-              {coinInfo?.open_source ? <span>YES</span> : <span>No</span>}
-            </li>
-          </ul>
-          <p className="description">{coinInfo?.description}</p>
-          <ul className="each-side">
-            <li>
-              <p>TOTAL SUPLY</p>
-              <span>{priceInfo?.total_supply}</span>
-            </li>
-            <li>
-              <p>MAX SUPPLY</p>
-              <span>{priceInfo?.max_supply}</span>
-            </li>
-          </ul>
-          <Routes>
-            <Route path="price" element={<Price />} />
-            <Route path="/chart" element={<Chart />} />
-          </Routes>
-        </CoinInfoWrap>
+        <Wrap>
+          <OverView coinInfo={coinInfo} />
+          <Description>{coinInfo?.description}</Description>
+          <OverViewItem priceInfo={priceInfo} />
+          <Tab />
+          <Outlet />
+        </Wrap>
       )}
     </Container>
   );
