@@ -307,7 +307,7 @@ function Coin() {
           <Description>{infoData?.description}</Description>
           <OverViewItem priceInfo={tickersData} />
           <Tab />
-          <Outlet />
+          <Outlet context={coinId} />
         </Wrap>
       )}
     </Container>
