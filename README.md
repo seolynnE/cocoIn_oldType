@@ -36,3 +36,8 @@
 - router 6v를 사용하는 바람에 chart를 받아와야 하는 과정에서 강의와 너무 달라서 진땀뺐다.
 - 일단 Router.tsx에서 <Route path="/:coinId/*" element={<Coin />}><Route path="chart" element={<Chart />} /></Route> 이렇게 넣고싶은 페이지 안에 자식으로 넣어 준 뒤, 해당 파일인 Coin.tsx 안에서 불러올 때 <Outlet context={coinId} />이런식으로 Outlet을 사용해야 했다.
 - Chart.tsx파일에서 해줘야 하는 일은 5v와 같지만, useOutletContext();를 추가해 줘서 기존 Chart의 props를 useOutletContext로 받아와준다. useOutletContext로 props를 받아오기 때문에 함수에 props를 받아오지 않아도 된다.
+  <br /><br />
+
+  **APEXCHARTS**
+  <br />
+  - data 불러오는 과정에서 data가 number여야 하는데 받아오는 값이 string이라 변환이 필요했다. data?.map(price => parseFloat(price.close)) 로 해결!! 하나 했는데 null일 때 값을 안받아와줘서 에러나길래 null일 때 빈 배열 뱉으라고 ?? []붙여줌. 잘 된다.
