@@ -38,6 +38,6 @@
 - Chart.tsx파일에서 해줘야 하는 일은 5v와 같지만, useOutletContext();를 추가해 줘서 기존 Chart의 props를 useOutletContext로 받아와준다. useOutletContext로 props를 받아오기 때문에 함수에 props를 받아오지 않아도 된다.
   <br /><br />
 
-  **APEXCHARTS**
-  <br />
-  - data 불러오는 과정에서 data가 number여야 하는데 받아오는 값이 string이라 변환이 필요했다. data?.map(price => parseFloat(price.close)) 로 해결!! 하나 했는데 null일 때 값을 안받아와줘서 에러나길래 null일 때 빈 배열 뱉으라고 ?? []붙여줌. 잘 된다.
+**7.APEXCHARTS**
+<br />
+- data 불러오는 과정에서 data가 number여야 하는데 받아오는 값이 string이라 변환이 필요했다. data?.map(price => parseFloat(price.close)) 로 해결!! 하나 했는데 null일 때 값을 안받아와줘서 에러나길래 null일 때 빈 배열 뱉으라고 ?? []붙여줌. 잘 된다.
