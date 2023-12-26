@@ -1,12 +1,7 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useMatch,
-  useParams,
-} from "react-router-dom";
+import { Link, Outlet, useMatch, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 
@@ -21,29 +16,13 @@ const Wrap = styled.div`
   gap: 20px;
   max-width: 600px;
   margin: 0 auto;
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: flex-end;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 60px;
-  padding: 17px 20px;
-  border-bottom: 1px solid #fff;
-  backdrop-filter: blur(2px);
-  z-index: 10;
-  a {
-    font-size: 24px;
-    font-weight: 900;
-    z-index: 11;
-  }
-  p {
+  h2 {
     padding-left: 8px;
-    font-size: 18px;
+    padding-bottom: 20px;
+    font-size: 24px;
     font-weight: 400;
+    text-align: center;
+    text-transform: capitalize;
   }
 `;
 
@@ -151,10 +130,6 @@ interface Params {
   coinId: string;
 }
 
-interface RouteState {
-  state: string;
-}
-
 interface InfoData {
   id: string;
   name: string;
@@ -211,7 +186,13 @@ interface PriceData {
   };
 }
 
-function OverView({ coinInfo }: { coinInfo: InfoData | undefined }) {
+function OverView({
+  coinInfo,
+  priceInfo,
+}: {
+  coinInfo: InfoData | undefined;
+  priceInfo: PriceData | undefined;
+}) {
   return (
     <OverViewWrap>
       <li>
@@ -223,12 +204,8 @@ function OverView({ coinInfo }: { coinInfo: InfoData | undefined }) {
         <span>{coinInfo?.symbol}</span>
       </li>
       <li>
-        <p>
-          OPEN
-          <br />
-          SOURCE
-        </p>
-        {coinInfo?.open_source ? <span>YES</span> : <span>No</span>}
+        <p>Price</p>
+        <span>{priceInfo?.quotes.USD.price.toFixed(3)}</span>
       </li>
     </OverViewWrap>
   );
@@ -267,7 +244,6 @@ function Tab() {
 
 function Coin() {
   const { coinId } = useParams<keyof Params>();
-  const { state } = useLocation() as RouteState;
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
     ["info", coinId],
     () => fetchCoinInfo(coinId)
@@ -276,6 +252,7 @@ function Coin() {
     ["tickers", coinId],
     () => fetchCoinTickers(coinId)
   );
+
   // const [loading, setLoading] = useState(true);
   // const [coinInfo, setCoinInfo] = useState<InfoData>();
   // const [priceInfo, setPriceInfo] = useState<PriceData>();
@@ -295,15 +272,15 @@ function Coin() {
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
-      <Header>
-        <Link to="/">cocoIn</Link>
-        <p>{state}</p>
-      </Header>
+      <Helmet>
+        <title>cocoIn-{coinId?.slice(4)}</title>
+      </Helmet>
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
         <Wrap>
-          <OverView coinInfo={infoData} />
+          <h2>{coinId?.slice(4)}</h2>
+          <OverView coinInfo={infoData} priceInfo={tickersData} />
           <Description>{infoData?.description}</Description>
           <OverViewItem priceInfo={tickersData} />
           <Tab />

@@ -3,28 +3,10 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   padding: 100px 20px;
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 60px;
-  padding: 8px 20px;
-  border-bottom: 1px solid #fff;
-  backdrop-filter: blur(2px);
-  z-index: 10;
-  a {
-    font-size: 24px;
-    font-weight: 900;
-    z-index: 11;
-  }
 `;
 
 const CoinList = styled.ul`
@@ -91,9 +73,9 @@ function Coins() {
   // }, []);
   return (
     <Container>
-      <Header>
-        <Link to="/">cocoIn</Link>
-      </Header>
+      <Helmet>
+        <title>cocoIn</title>
+      </Helmet>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
