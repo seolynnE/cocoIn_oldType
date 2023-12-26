@@ -1,6 +1,5 @@
 **API연동 연습을 위한 코인사이트 만들기**
-<br />
-노마드코더 React JS 마스터클래스 #5 CRYPTO TRACKER
+
 <br /><br /><br />
 
 **1.createGlobalStyle을 활용해 reset.css 만들기**
