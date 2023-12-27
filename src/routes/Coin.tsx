@@ -205,7 +205,7 @@ function OverView({
       </li>
       <li>
         <p>Price</p>
-        <span>{priceInfo?.quotes.USD.price.toFixed(3)}</span>
+        <span>{priceInfo?.quotes?.USD.price.toFixed(3)}</span>
       </li>
     </OverViewWrap>
   );
